@@ -1,55 +1,12 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>MyPaste Sync</title>
-  <style>
-    body { margin: 0; font-family: sans-serif; }
-    textarea {
-      width: 100%;
-      height: 100vh;
-      font-size: 16px;
-      padding: 1rem;
-      box-sizing: border-box;
-      border: none;
-      resize: none;
-    }
-  </style>
+  <meta charset="UTF-8">
+  <title>MyPaste</title>
+  <link rel="stylesheet" href="styles.css"> <!-- Link to CSS file -->
 </head>
 <body>
-  <textarea id="editor" placeholder="Loading..."></textarea>
-
-  <script>
-    const apiKey = '$2a$10$/GuryZIcDGwtlt8Km10a7eoRQKU3qLO4PsvYmxYgV6c9YjmQN8swS';  // <-- Replace this
-    const hashKey = location.hash.substring(1) || 'default';
-    const binUrl = `https://api.jsonbin.io/v3/b/67fcfca98561e97a50ff4606`;
-
-    const editor = document.getElementById('editor');
-
-    // Load note from JSONBin
-    fetch(binUrl, {
-      headers: {
-        'X-Master-Key': apiKey
-      }
-    })
-    .then(res => res.json())
-    .then(data => {
-      const note = data.record[hashKey] || '';
-      editor.value = note;
-    });
-
-    // Save note to JSONBin on change
-    editor.addEventListener('input', () => {
-      const updatedNote = editor.value;
-
-      fetch(binUrl, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Master-Key': apiKey
-        },
-        body: JSON.stringify({ [hashKey]: updatedNote })
-      });
-    });
-  </script>
+  <div id="editor" contenteditable="true">Loading...</div>
+  <script src="script.js"></script> <!-- Link to JavaScript file -->
 </body>
 </html>
