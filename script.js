@@ -1,83 +1,58 @@
-body {
-  margin: 0;
-  font-family: sans-serif;
-}
+const apiKey = '$2a$10$/GuryZIcDGwtlt8Km10a7eoRQKU3qLO4PsvYmxYgV6c9YjmQN8swS'; // Replace with your JSONBin Secret Key
+const binUrl = 'https://api.jsonbin.io/v3/b/67fcfca98561e97a50ff4606'; // Your Bin URL
+const hashKey = location.hash.substring(1) || 'default';
+const editor = document.getElementById('editor');
 
-#editor {
-  width: 100%;
-  min-height: 100vh;
-  font-size: 16px;
-  padding: 1rem;
-  box-sizing: border-box;
-  border: none;
-  outline: none;
-  white-space: pre-wrap; /* Preserve line breaks and spaces */
-  overflow: auto;
-}
+// Load note from JSONBin
+fetch(binUrl, {
+  headers: { 'X-Master-Key': apiKey }
+})
+.then(res => res.json())
+.then(data => {
+  const note = data.record[hashKey] || '';
+  editor.innerHTML = note || '<p>Paste your content here...</p>';
+})
+.catch(() => editor.innerHTML = '<p>Error loading note</p>');
 
-/* Mimic Microsoft Word styles */
-#editor p {
-  margin: 0 0 12px 0; /* Word's default paragraph spacing */
-  font-family: "Calibri", sans-serif; /* Common Word font */
-  font-size: 11pt;
-}
+// Clean up Word's HTML on paste
+editor.addEventListener('paste', (e) => {
+  e.preventDefault();
+  const clipboardData = e.clipboardData || window.clipboardData;
+  let pastedData = clipboardData.getData('text/html') || clipboardData.getData('text/plain');
+  
+  // Basic cleanup: Remove excessive spans and Word-specific attributes
+  pastedData = pastedData
+    .replace(/<!--[\s\S]*?-->/g, '') // Remove HTML comments
+    .replace(/<span[^>]*>(.*?)<\/span>/g, '$1') // Remove unnecessary spans
+    .replace(/ class="Mso[^"]*"/g, ''); // Remove Word-specific classes
 
-#editor h1, #editor h2, #editor h3, #editor h4, #editor h5, #editor h6 {
-  font-family: "Calibri", sans-serif;
-  margin: 12px 0 6px 0;
-}
+  // Insert the cleaned HTML
+  document.execCommand('insertHTML', false, pastedData);
+});
 
-#editor h1 { font-size: 22pt; }
-#editor h2 { font-size: 16pt; }
-#editor h3 { font-size: 14pt; }
-#editor h4 { font-size: 12pt; }
-#editor h5 { font-size: 11pt; }
-#editor h6 { font-size: 10pt; }
-
-#editor ul, #editor ol {
-  margin: 0 0 12px 0;
-  padding-left: 36px; /* Default Word indent for lists */
-}
-
-#editor li {
-  margin-bottom: 6px;
-}
-
-/* Support nested lists */
-#editor ul ul, #editor ol ol, #editor ul ol, #editor ol ul {
-  padding-left: 36px;
-}
-
-#editor b, #editor strong {
-  font-weight: bold;
-}
-
-#editor i, #editor em {
-  font-style: italic;
-}
-
-#editor u {
-  text-decoration: underline;
-}
-
-/* Handle Word's inline styles for indents */
-#editor [style*="margin-left"] {
-  margin-left: inherit !important;
-}
-
-/* Support additional Word styles */
-#editor [style*="font-family"] {
-  font-family: inherit !important;
-}
-
-#editor [style*="font-size"] {
-  font-size: inherit !important;
-}
-
-#editor [style*="color"] {
-  color: inherit !important;
-}
-
-#editor [style*="line-height"] {
-  line-height: inherit !important;
-}
+// Save note to JSONBin on change with a debounce
+let timeout;
+editor.addEventListener('input', () => {
+  clearTimeout(timeout);
+  timeout = setTimeout(() => {
+    const updatedNote = editor.innerHTML;
+    // Fetch current data, update it, then save
+    fetch(binUrl, {
+      headers: { 'X-Master-Key': apiKey }
+    })
+    .then(res => res.json())
+    .then(data => {
+      const currentData = data.record || {};
+      currentData[hashKey] = updatedNote;
+      return fetch(binUrl, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Master-Key': apiKey
+        },
+        body: JSON.stringify(currentData)
+      });
+    })
+    .catch(err => console.error('Error saving:', err));
+  }, 1000); // Wait 1 second after typing stops
+});
