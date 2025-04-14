@@ -1,42 +1,55 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>MyPaste</title>
+  <title>MyPaste Sync</title>
   <style>
-    body {
-      font-family: sans-serif;
-      margin: 0;
-      padding: 0;
-    }
+    body { margin: 0; font-family: sans-serif; }
     textarea {
       width: 100%;
       height: 100vh;
-      border: none;
+      font-size: 16px;
       padding: 1rem;
-      font-size: 1rem;
       box-sizing: border-box;
+      border: none;
       resize: none;
     }
   </style>
 </head>
 <body>
-  <textarea id="editor" placeholder="Paste anything here..."></textarea>
+  <textarea id="editor" placeholder="Loading..."></textarea>
 
   <script>
+    const apiKey = '$2a$10$iy1l4EeXdSkzRqhImCA4/evMFAqIuhtZBV5oSnShGtKrg62HJ5NwG';  // <-- Replace this
     const hashKey = location.hash.substring(1) || 'default';
+    const binUrl = `https://api.jsonbin.io/v3/b/67fcfca98561e97a50ff4606`;
+
     const editor = document.getElementById('editor');
 
-    // Load saved text
-    const savedText = localStorage.getItem('mypaste-' + hashKey);
-    if (savedText) editor.value = savedText;
-
-    // Save text automatically on change
-    editor.addEventListener('input', () => {
-      localStorage.setItem('mypaste-' + hashKey, editor.value);
+    // Load note from JSONBin
+    fetch(binUrl, {
+      headers: {
+        'X-Master-Key': apiKey
+      }
+    })
+    .then(res => res.json())
+    .then(data => {
+      const note = data.record[hashKey] || '';
+      editor.value = note;
     });
 
-    // Update tab title
-    document.title = 'MyPaste - #' + hashKey;
+    // Save note to JSONBin on change
+    editor.addEventListener('input', () => {
+      const updatedNote = editor.value;
+
+      fetch(binUrl, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Master-Key': apiKey
+        },
+        body: JSON.stringify({ [hashKey]: updatedNote })
+      });
+    });
   </script>
 </body>
 </html>
