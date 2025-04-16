@@ -2,17 +2,28 @@ const apiKey = '$2a$10$/GuryZIcDGwtlt8Km10a7eoRQKU3qLO4PsvYmxYgV6c9YjmQN8swS'; /
 const binUrl = 'https://api.jsonbin.io/v3/b/67fcfca98561e97a50ff4606'; // Your Bin URL
 const hashKey = location.hash.substring(1) || 'default';
 const editor = document.getElementById('editor');
+const docTitle = document.getElementById('doc-title');
 
-// Load note from JSONBin
+// Load note and title from JSONBin
 fetch(binUrl, {
   headers: { 'X-Master-Key': apiKey }
 })
-.then(res => res.json())
-.then(data => {
-  const note = data.record[hashKey] || '';
-  editor.innerHTML = note || '<p>Paste your content here...</p>';
+.then(res => {
+  if (!res.ok) {
+    throw new Error(`HTTP error! Status: ${res.status}`);
+  }
+  return res.json();
 })
-.catch(() => editor.innerHTML = '<p>Error loading note</p>');
+.then(data => {
+  const note = data.record[hashKey]?.content || '';
+  const title = data.record[hashKey]?.title || 'Untitled Document';
+  editor.innerHTML = note || '<p>Paste your content here...</p>';
+  docTitle.value = title;
+})
+.catch(err => {
+  console.error('Fetch error:', err);
+  editor.innerHTML = '<p>Error loading note</p>';
+});
 
 // Clean up Word's HTML on paste
 editor.addEventListener('paste', (e) => {
@@ -30,12 +41,16 @@ editor.addEventListener('paste', (e) => {
   document.execCommand('insertHTML', false, pastedData);
 });
 
-// Save note to JSONBin on change with a debounce
+// Save note and title to JSONBin on change with a debounce
 let timeout;
-editor.addEventListener('input', () => {
+editor.addEventListener('input', saveContent);
+docTitle.addEventListener('input', saveContent);
+
+function saveContent() {
   clearTimeout(timeout);
   timeout = setTimeout(() => {
     const updatedNote = editor.innerHTML;
+    const updatedTitle = docTitle.value;
     // Fetch current data, update it, then save
     fetch(binUrl, {
       headers: { 'X-Master-Key': apiKey }
@@ -43,7 +58,7 @@ editor.addEventListener('input', () => {
     .then(res => res.json())
     .then(data => {
       const currentData = data.record || {};
-      currentData[hashKey] = updatedNote;
+      currentData[hashKey] = { content: updatedNote, title: updatedTitle };
       return fetch(binUrl, {
         method: 'PUT',
         headers: {
@@ -55,4 +70,20 @@ editor.addEventListener('input', () => {
     })
     .catch(err => console.error('Error saving:', err));
   }, 1000); // Wait 1 second after typing stops
+}
+
+// Make document title editable on click
+docTitle.addEventListener('click', () => {
+  docTitle.removeAttribute('readonly');
 });
+
+// Dark mode toggle
+function toggleDarkMode() {
+  document.body.classList.toggle('dark-mode');
+  localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
+}
+
+// Load dark mode preference
+if (localStorage.getItem('darkMode') === 'true') {
+  document.body.classList.add('dark-mode');
+}
