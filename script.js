@@ -1,4 +1,4 @@
-const apiKey = '$2a$10$/GuryZIcDGwtlt8Km10a7eoRQKU3qLO4PsvYmxYgV6c9YjmQN8sw'; // Replace with your JSONBin Secret Key
+const apiKey = '$2a$10$/GuryZIcDGwtlt8Km10a7eoRQKU3qLO4PsvYmxYgV6c9YjmQN8swS'; // Replace with your JSONBin Secret Key
 const binUrl = 'https://api.jsonbin.io/v3/b/67fcfca98561e97a50ff4606'; // Your Bin URL
 const hashKey = location.hash.substring(1) || 'default';
 const editor = document.getElementById('editor');
