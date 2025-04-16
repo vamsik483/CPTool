@@ -1,65 +1,146 @@
-body {
+* {
   margin: 0;
-  font-family: 'Arial', sans-serif;
-  background-color: #f5f5f5;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: linear-gradient(135deg, #f5f7fa, #c3cfe2); /* Subtle gradient */
+  color: #1a1a1a;
+  transition: all 0.3s ease;
+}
+
+/* Dark mode */
+body.dark-mode {
+  background: linear-gradient(135deg, #1a1a1a, #2c3e50);
+  color: #e0e0e0;
+}
+
+header {
+  background: #ffffff;
+  border-bottom: 1px solid #e0e0e0;
+  padding: 12px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+body.dark-mode header {
+  background: #2a2a2a;
+  border-bottom: 1px solid #444;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 20px;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+body.dark-mode .logo {
+  color: #e0e0e0;
+}
+
+.logo i {
+  color: #007bff;
+}
+
+.document-title input {
+  background: none;
+  border: none;
+  font-size: 16px;
+  font-weight: 500;
+  color: #1a1a1a;
+  cursor: pointer;
+  outline: none;
+}
+
+body.dark-mode .document-title input {
+  color: #e0e0e0;
 }
 
 .toolbar {
-  background-color: #ffffff;
+  background: #ffffff;
   border-bottom: 1px solid #e0e0e0;
-  padding: 8px 16px;
+  padding: 8px 24px;
   position: sticky;
   top: 0;
   z-index: 1000;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
 }
 
-.toolbar button {
+body.dark-mode .toolbar {
+  background: #2a2a2a;
+  border-bottom: 1px solid #444;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.toolbar button, .toolbar select {
   background: none;
   border: 1px solid #e0e0e0;
-  border-radius: 4px;
-  padding: 6px 10px;
+  border-radius: 6px;
+  padding: 6px 12px;
   cursor: pointer;
   font-size: 14px;
-  color: #333;
-  transition: background-color 0.2s;
+  color: #1a1a1a;
+  transition: all 0.2s ease;
 }
 
-.toolbar button:hover {
-  background-color: #f0f0f0;
+body.dark-mode .toolbar button, body.dark-mode .toolbar select {
+  border: 1px solid #555;
+  color: #e0e0e0;
 }
 
-.toolbar button:active {
-  background-color: #e0e0e0;
+.toolbar button:hover, .toolbar select:hover {
+  background: #f0f0f0;
 }
 
-.toolbar select {
-  border: 1px solid #e0e0e0;
-  border-radius: 4px;
-  padding: 4px;
-  font-size: 14px;
-  color: #333;
-  background-color: #fff;
-  cursor: pointer;
+body.dark-mode .toolbar button:hover, body.dark-mode .toolbar select:hover {
+  background: #3a3a3a;
+}
+
+.toolbar button:active, .toolbar select:active {
+  background: #e0e0e0;
+}
+
+body.dark-mode .toolbar button:active, body.dark-mode .toolbar select:active {
+  background: #4a4a4a;
+}
+
+.editor-container {
+  display: flex;
+  justify-content: center;
+  padding: 24px;
 }
 
 #editor {
   width: 100%;
-  min-height: calc(100vh - 60px); /* Adjust for toolbar height */
+  min-height: calc(100vh - 120px);
   font-size: 16px;
-  padding: 16px;
+  padding: 24px;
   box-sizing: border-box;
   border: none;
   outline: none;
   white-space: pre-wrap;
   overflow: auto;
-  background-color: #ffffff;
-  margin: 0 auto;
-  max-width: 900px; /* Mimic Word's page width */
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background: #ffffff;
+  max-width: 900px;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+body.dark-mode #editor {
+  background: #1e1e1e;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
 }
 
 /* Mimic Microsoft Word styles */
