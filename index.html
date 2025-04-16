@@ -2,12 +2,24 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>MyPaste - Professional Editor</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CopyPasteTool</title>
   <link rel="stylesheet" href="styles.css">
-  <!-- Add Font Awesome for icons -->
+  <!-- Google Fonts: Inter (used by SpaceX for a futuristic look) -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Font Awesome for icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>
+  <header>
+    <div class="logo">
+      <i class="fas fa-rocket"></i>
+      <span>MyPaste</span>
+    </div>
+    <div class="document-title">
+      <input type="text" id="doc-title" value="Untitled Document" readonly>
+    </div>
+  </header>
   <div class="toolbar">
     <select onchange="document.execCommand('formatBlock', false, this.value)">
       <option value="">Normal</option>
@@ -25,8 +37,11 @@
     <button onclick="document.execCommand('justifyLeft', false, null)" title="Align Left"><i class="fas fa-align-left"></i></button>
     <button onclick="document.execCommand('justifyCenter', false, null)" title="Align Center"><i class="fas fa-align-center"></i></button>
     <button onclick="document.execCommand('justifyRight', false, null)" title="Align Right"><i class="fas fa-align-right"></i></button>
+    <button onclick="toggleDarkMode()" title="Toggle Dark Mode"><i class="fas fa-moon"></i></button>
   </div>
-  <div id="editor" contenteditable="true">Loading...</div>
+  <div class="editor-container">
+    <div id="editor" contenteditable="true">Loading...</div>
+  </div>
   <script src="script.js"></script>
 </body>
 </html>
