@@ -6,7 +6,7 @@ const docTitle = document.getElementById('doc-title');
 
 // Load note and title from JSONBin
 fetch(binUrl, {
-  headers: { 'X-Master-Key': apiKey }
+  headers: { 'X-Access-Key': apiKey }
 })
 .then(res => {
   if (!res.ok) {
@@ -87,4 +87,5 @@ function toggleDarkMode() {
 if (localStorage.getItem('darkMode') === 'true') {
   document.body.classList.add('dark-mode');
 }
+
 
